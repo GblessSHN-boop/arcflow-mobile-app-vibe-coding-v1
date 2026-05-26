@@ -1,6 +1,6 @@
-{
-    "name": "arcflow",
-    "short_name": "arcflow",
+﻿{
+    "name": "ARCFlow",
+    "short_name": "ARCFlow",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
@@ -33,3 +33,4 @@
         }
     ]
 }
+
