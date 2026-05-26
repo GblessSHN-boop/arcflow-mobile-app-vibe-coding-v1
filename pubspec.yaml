@@ -1,7 +1,7 @@
 ﻿name: arcflow
 description: ARCFlow premium offline first mobile application prototype.
 publish_to: 'none'
-version: 1.2.0+3
+version: 1.2.1+4
 
 environment:
   sdk: ^3.9.0
@@ -33,6 +33,7 @@ flutter_launcher_icons:
   image_path: assets/brand/arcflow/app_icon/arcflowiconapp.png
   adaptive_icon_background: "#000000"
   adaptive_icon_foreground: assets/brand/arcflow/app_icon/arcflowiconapp.png
+
 
 
 

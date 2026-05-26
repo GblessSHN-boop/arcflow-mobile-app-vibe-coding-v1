@@ -92,80 +92,15 @@ class _HabitTrackerPanelState extends State<HabitTrackerPanel> {
   }
 
   Future<void> addHabit() async {
-    final controller = TextEditingController();
-
     final value = await showDialog<String>(
       context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.white,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 22),
-          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'ADD NEW HABIT',
-                  style: TextStyle(
-                    color: Color(0xFF111111),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: controller,
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                    hintText: 'Example: Drink water',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.zero),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.zero,
-                      borderSide: BorderSide(color: Color(0xFFD6D6D6)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.zero,
-                      borderSide: BorderSide(color: Color(0xFF111111)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _SmallButton(
-                        text: 'Cancel',
-                        filled: false,
-                        onTap: () => Navigator.pop(context),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _SmallButton(
-                        text: 'Add',
-                        filled: true,
-                        onTap: () {
-                          final text = controller.text.trim();
-                          if (text.isEmpty) return;
-                          Navigator.pop(context, text);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
+      barrierDismissible: true,
+      builder: (dialogContext) {
+        return const _AddHabitDialog();
       },
     );
 
-    controller.dispose();
-
+    if (!mounted) return;
     if (value == null || value.trim().isEmpty) return;
 
     setState(() {
@@ -182,25 +117,11 @@ class _HabitTrackerPanelState extends State<HabitTrackerPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFD6D6D6), width: 1),
-      ),
+    return _HabitPanelShell(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'HABIT TRACKER',
-            style: TextStyle(
-              color: Color(0xFF111111),
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.1,
-            ),
-          ),
+          const _SectionLabel('HABIT TRACKER'),
           const SizedBox(height: 6),
           const Text(
             'Tap any habit to update today progress.',
@@ -275,16 +196,125 @@ class _HabitTrackerPanelState extends State<HabitTrackerPanel> {
             return Column(
               children: [
                 _HabitRow(habit: habit, onTap: () => toggleHabit(index)),
-                if (index != habits.length - 1)
-                  Container(
-                    height: 1,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    color: const Color(0xFFE0E0E0),
-                  ),
+                if (index != habits.length - 1) const _DividerLine(),
               ],
             );
           }),
         ],
+      ),
+    );
+  }
+}
+
+class _AddHabitDialog extends StatefulWidget {
+  const _AddHabitDialog();
+
+  @override
+  State<_AddHabitDialog> createState() => _AddHabitDialogState();
+}
+
+class _AddHabitDialogState extends State<_AddHabitDialog> {
+  final TextEditingController controller = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    focusNode.unfocus();
+    focusNode.dispose();
+    controller.dispose();
+    super.dispose();
+  }
+
+  void submit() {
+    final text = controller.text.trim();
+    if (text.isEmpty) return;
+
+    FocusScope.of(context).unfocus();
+    Navigator.of(context).pop(text);
+  }
+
+  void cancel() {
+    FocusScope.of(context).unfocus();
+    Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + bottomInset),
+      child: Center(
+        child: Material(
+          color: Colors.transparent,
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(maxWidth: 420),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFF111111), width: 1),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _SectionLabel('ADD NEW HABIT'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    autofocus: true,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => submit(),
+                    decoration: const InputDecoration(
+                      hintText: 'Example: Drink water',
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.zero,
+                        borderSide: BorderSide(color: Color(0xFFD6D6D6)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.zero,
+                        borderSide: BorderSide(color: Color(0xFF111111)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _SmallButton(
+                          text: 'Cancel',
+                          filled: false,
+                          onTap: cancel,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _SmallButton(
+                          text: 'Add',
+                          filled: true,
+                          onTap: submit,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -419,6 +449,57 @@ class _SmallButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _HabitPanelShell extends StatelessWidget {
+  const _HabitPanelShell({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: const Color(0xFFD6D6D6), width: 1),
+      ),
+      child: child,
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        color: Color(0xFF111111),
+        fontSize: 10,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 1.1,
+      ),
+    );
+  }
+}
+
+class _DividerLine extends StatelessWidget {
+  const _DividerLine();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      color: const Color(0xFFE0E0E0),
     );
   }
 }
