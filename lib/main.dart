@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -428,148 +428,7 @@ class LoadingProgressPanel extends StatelessWidget {
   }
 }
 
-class HomeDashboardScreen extends StatelessWidget {
-  const HomeDashboardScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.black,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(22, 20, 22, 22),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const DashboardHeader(),
-              const SizedBox(height: 26),
-              const DashboardPanel(
-                title: 'Today Overview',
-                value: 'System ready',
-                description: 'ARCFlow workspace has been initialized.',
-              ),
-              const SizedBox(height: 14),
-              const DashboardPanel(
-                title: 'Habit Tracker',
-                value: 'Starter module',
-                description: 'Offline habit tracking interface preview.',
-              ),
-              const SizedBox(height: 14),
-              const DashboardPanel(
-                title: 'Task Management',
-                value: 'Dashboard preview',
-                description: 'Clean productivity panel for the next phase.',
-              ),
-              const Spacer(),
-              Container(
-                width: double.infinity,
-                height: 3,
-                color: AppColors.primary,
-                alignment: Alignment.centerLeft,
-                child: FractionallySizedBox(
-                  widthFactor: 0.64,
-                  child: Container(height: 3, color: AppColors.highlight),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Image.asset(
-          AppAssets.dashboardIcon,
-          width: 154,
-          height: 68,
-          fit: BoxFit.contain,
-          alignment: Alignment.centerLeft,
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'Professional offline productivity system',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: AppColors.softText,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.3,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class DashboardPanel extends StatelessWidget {
-  const DashboardPanel({
-    super.key,
-    required this.title,
-    required this.value,
-    required this.description,
-  });
-
-  final String title;
-  final String value;
-  final String description;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF070711),
-        border: Border.all(color: AppColors.border, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title.toUpperCase(),
-            style: const TextStyle(
-              color: AppColors.highlight,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 9),
-          Text(
-            value,
-            style: const TextStyle(
-              color: AppColors.white,
-              fontSize: 17,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.4,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            description,
-            style: const TextStyle(
-              color: AppColors.softText,
-              fontSize: 12,
-              height: 1.35,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class FullScreenVideo extends StatelessWidget {
+C:\Users\Gland Siahaanclass FullScreenVideo extends StatelessWidget {
   const FullScreenVideo({super.key, required this.controller});
 
   final VideoPlayerController controller;
@@ -593,3 +452,4 @@ class FullScreenVideo extends StatelessWidget {
     );
   }
 }
+
