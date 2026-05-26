@@ -2,6 +2,30 @@ import 'package:flutter/material.dart';
 
 import '../../domain/habit_item.dart';
 
+class HabitTrackerSnapshot {
+  const HabitTrackerSnapshot({
+    required this.total,
+    required this.completed,
+    required this.progress,
+    required this.bestHabit,
+  });
+
+  final int total;
+  final int completed;
+  final int progress;
+  final String bestHabit;
+}
+
+final ValueNotifier<HabitTrackerSnapshot> habitTrackerStatsNotifier =
+    ValueNotifier<HabitTrackerSnapshot>(
+      const HabitTrackerSnapshot(
+        total: 4,
+        completed: 1,
+        progress: 25,
+        bestHabit: 'Read 20 pages',
+      ),
+    );
+
 class HabitTrackerPanel extends StatefulWidget {
   const HabitTrackerPanel({super.key});
 
@@ -21,26 +45,34 @@ class _HabitTrackerPanelState extends State<HabitTrackerPanel> {
         category: 'Learning',
         target: 1,
         completed: 1,
+        streak: 4,
       ),
       const HabitItem(
         title: 'Workout 30 minutes',
         category: 'Health',
         target: 1,
         completed: 0,
+        streak: 2,
       ),
       const HabitItem(
         title: 'Study Flutter',
         category: 'Skill',
         target: 1,
         completed: 0,
+        streak: 3,
       ),
       const HabitItem(
         title: 'Plan tomorrow',
         category: 'Productivity',
         target: 1,
         completed: 0,
+        streak: 1,
       ),
     ];
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      syncStats();
+    });
   }
 
   int get completedCount {
@@ -52,42 +84,58 @@ class _HabitTrackerPanelState extends State<HabitTrackerPanel> {
     return ((completedCount / habits.length) * 100).round();
   }
 
+  String get bestHabit {
+    if (habits.isEmpty) return 'No habit yet';
+
+    final doneHabits = habits.where((habit) => habit.isDone).toList();
+    if (doneHabits.isNotEmpty) {
+      doneHabits.sort((a, b) => b.streak.compareTo(a.streak));
+      return doneHabits.first.title;
+    }
+
+    final sorted = [...habits]..sort((a, b) => b.streak.compareTo(a.streak));
+    return sorted.first.title;
+  }
+
+  void syncStats() {
+    habitTrackerStatsNotifier.value = HabitTrackerSnapshot(
+      total: habits.length,
+      completed: completedCount,
+      progress: progress,
+      bestHabit: bestHabit,
+    );
+  }
+
   void toggleHabit(int index) {
     final habit = habits[index];
 
     setState(() {
-      habits[index] = HabitItem(
-        title: habit.title,
-        category: habit.category,
-        target: habit.target,
+      habits[index] = habit.copyWith(
         completed: habit.isDone ? 0 : habit.target,
+        streak: habit.isDone ? habit.streak : habit.streak + 1,
       );
+      syncStats();
     });
   }
 
   void resetHabits() {
     setState(() {
       habits = habits.map((habit) {
-        return HabitItem(
-          title: habit.title,
-          category: habit.category,
-          target: habit.target,
-          completed: 0,
-        );
+        return habit.copyWith(completed: 0);
       }).toList();
+      syncStats();
     });
   }
 
   void completeAllHabits() {
     setState(() {
       habits = habits.map((habit) {
-        return HabitItem(
-          title: habit.title,
-          category: habit.category,
-          target: habit.target,
+        return habit.copyWith(
           completed: habit.target,
+          streak: habit.streak + 1,
         );
       }).toList();
+      syncStats();
     });
   }
 
@@ -110,8 +158,10 @@ class _HabitTrackerPanelState extends State<HabitTrackerPanel> {
           category: 'Custom',
           target: 1,
           completed: 0,
+          streak: 0,
         ),
       );
+      syncStats();
     });
   }
 
@@ -124,7 +174,7 @@ class _HabitTrackerPanelState extends State<HabitTrackerPanel> {
           const _SectionLabel('HABIT TRACKER'),
           const SizedBox(height: 6),
           const Text(
-            'Tap any habit to update today progress.',
+            'Tap a habit to update progress.',
             style: TextStyle(
               color: Color(0xFF555555),
               fontSize: 11,
@@ -136,31 +186,28 @@ class _HabitTrackerPanelState extends State<HabitTrackerPanel> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                '$progress%',
-                style: const TextStyle(
-                  color: Color(0xFF111111),
-                  fontSize: 42,
-                  fontWeight: FontWeight.w900,
-                  height: 0.95,
-                ),
-              ),
+              AnimatedNumberText(value: progress, fontSize: 42, suffix: '%'),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  '$completedCount of ${habits.length} habits completed today.',
-                  style: const TextStyle(
-                    color: Color(0xFF555555),
-                    fontSize: 12,
-                    height: 1.35,
-                    fontWeight: FontWeight.w700,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 260),
+                  switchInCurve: Curves.easeOut,
+                  switchOutCurve: Curves.easeIn,
+                  child: Text(
+                    '$completedCount of ${habits.length} habits completed today.',
+                    style: const TextStyle(
+                      color: Color(0xFF555555),
+                      fontSize: 12,
+                      height: 1.35,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          _ProgressBar(value: progress),
+          AnimatedProgressBar(value: progress),
           const SizedBox(height: 14),
           Row(
             children: [
@@ -268,11 +315,21 @@ class _AddHabitDialogState extends State<_AddHabitDialog> {
                   TextField(
                     controller: controller,
                     focusNode: focusNode,
+                    style: const TextStyle(
+                      color: Color(0xFF111111),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    cursorColor: const Color(0xFF111111),
                     autofocus: true,
                     textInputAction: TextInputAction.done,
                     onSubmitted: (_) => submit(),
                     decoration: const InputDecoration(
                       hintText: 'Example: Drink water',
+                      hintStyle: TextStyle(
+                        color: Color(0xFF777777),
+                        fontWeight: FontWeight.w600,
+                      ),
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 12,
@@ -335,18 +392,38 @@ class _HabitRow extends StatelessWidget {
         splashColor: const Color(0xFFEDEDED),
         highlightColor: const Color(0xFFEDEDED),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             children: [
-              Container(
-                width: 20,
-                height: 20,
-                color: habit.isDone
-                    ? const Color(0xFF111111)
-                    : const Color(0xFFEDEDED),
-                child: habit.isDone
-                    ? const Icon(Icons.check, color: Colors.white, size: 15)
-                    : null,
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: habit.isDone ? 0.82 : 1.08, end: 1),
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutBack,
+                builder: (context, scale, child) {
+                  return Transform.scale(
+                    scale: scale,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOut,
+                      width: 22,
+                      height: 22,
+                      color: habit.isDone
+                          ? const Color(0xFF111111)
+                          : const Color(0xFFEDEDED),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 180),
+                        child: habit.isDone
+                            ? const Icon(
+                                Icons.check,
+                                key: ValueKey('checked'),
+                                color: Colors.white,
+                                size: 16,
+                              )
+                            : const SizedBox(key: ValueKey('empty')),
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 11),
               Expanded(
@@ -365,7 +442,7 @@ class _HabitRow extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      habit.category,
+                      '${habit.category} | ${habit.streak} day streak',
                       style: const TextStyle(
                         color: Color(0xFF666666),
                         fontSize: 10,
@@ -375,12 +452,15 @@ class _HabitRow extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(
-                habit.isDone ? 'Done' : 'Pending',
-                style: const TextStyle(
-                  color: Color(0xFF111111),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                child: Text(
+                  habit.isDone ? 'Done' : 'Pending',
+                  style: const TextStyle(
+                    color: Color(0xFF111111),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
             ],
@@ -391,8 +471,41 @@ class _HabitRow extends StatelessWidget {
   }
 }
 
-class _ProgressBar extends StatelessWidget {
-  const _ProgressBar({required this.value});
+class AnimatedNumberText extends StatelessWidget {
+  const AnimatedNumberText({
+    super.key,
+    required this.value,
+    required this.fontSize,
+    this.suffix = '',
+  });
+
+  final int value;
+  final double fontSize;
+  final String suffix;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<int>(
+      tween: IntTween(end: value),
+      duration: const Duration(milliseconds: 520),
+      curve: Curves.easeOutCubic,
+      builder: (context, animatedValue, child) {
+        return Text(
+          '$animatedValue$suffix',
+          style: TextStyle(
+            color: const Color(0xFF111111),
+            fontSize: fontSize,
+            fontWeight: FontWeight.w900,
+            height: 0.95,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class AnimatedProgressBar extends StatelessWidget {
+  const AnimatedProgressBar({super.key, required this.value});
 
   final int value;
 
@@ -401,13 +514,20 @@ class _ProgressBar extends StatelessWidget {
     final factor = (value / 100).clamp(0.0, 1.0);
 
     return Container(
-      height: 8,
+      height: 9,
       width: double.infinity,
       color: const Color(0xFFEDEDED),
       alignment: Alignment.centerLeft,
-      child: FractionallySizedBox(
-        widthFactor: factor,
-        child: Container(height: 8, color: const Color(0xFF111111)),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween<double>(end: factor),
+        duration: const Duration(milliseconds: 560),
+        curve: Curves.easeOutCubic,
+        builder: (context, widthFactor, child) {
+          return FractionallySizedBox(
+            widthFactor: widthFactor,
+            child: Container(height: 9, color: const Color(0xFF111111)),
+          );
+        },
       ),
     );
   }
@@ -431,7 +551,7 @@ class _SmallButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          height: 38,
+          height: 40,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             border: Border.all(color: const Color(0xFF111111), width: 1),
@@ -462,7 +582,7 @@ class _HabitPanelShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: const Color(0xFFD6D6D6), width: 1),

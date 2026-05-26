@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'features/habit_tracker/presentation/widgets/habit_tracker_panel.dart';
+import 'features/main_dashboard/presentation/widgets/live_dashboard_widgets.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -442,17 +443,20 @@ class HomeDashboardScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _HomeHeader(),
+              const DashboardEntry(order: 0, child: _HomeHeader()),
               const SizedBox(height: 16),
-              const _TodayScoreCard(),
+              const DashboardEntry(order: 1, child: LiveTodayScoreCard()),
               const SizedBox(height: 12),
-              const _QuickActions(),
+              const DashboardEntry(order: 2, child: LiveQuickActions()),
               const SizedBox(height: 12),
-              const HabitTrackerPanel(),
+              const DashboardEntry(order: 3, child: HabitTrackerPanel()),
               const SizedBox(height: 12),
-              const _ContributionCard(),
+              const DashboardEntry(
+                order: 4,
+                child: ContributionsLastYearCard(),
+              ),
               const SizedBox(height: 12),
-              const _InsightCard(),
+              const DashboardEntry(order: 5, child: LiveInsightCard()),
             ],
           ),
         ),
