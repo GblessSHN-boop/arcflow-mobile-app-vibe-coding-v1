@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'features/habit_tracker/presentation/widgets/habit_tracker_panel.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -447,7 +448,7 @@ class HomeDashboardScreen extends StatelessWidget {
               const SizedBox(height: 12),
               const _QuickActions(),
               const SizedBox(height: 12),
-              const _TodaySection(),
+              const HabitTrackerPanel(),
               const SizedBox(height: 12),
               const _ContributionCard(),
               const SizedBox(height: 12),
@@ -479,7 +480,7 @@ class _HomeHeader extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Offline productivity workspace',
+            'ARCFlow offline productivity workspace',
             style: TextStyle(
               color: Color(0xFF444444),
               fontSize: 12,
@@ -527,7 +528,7 @@ class _TodayScoreCard extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(bottom: 4),
                   child: Text(
-                    'Your daily workspace is clear and ready.',
+                    'Your ARCFlow workspace is ready.',
                     style: TextStyle(
                       color: Color(0xFF555555),
                       fontSize: 12,
