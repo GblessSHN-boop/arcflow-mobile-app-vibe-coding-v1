@@ -434,43 +434,24 @@ class HomeDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.black,
+      backgroundColor: const Color(0xFFF6F6F6),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(22, 20, 22, 22),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const DashboardHeader(),
-              const SizedBox(height: 26),
-              const DashboardPanel(
-                title: 'Today Overview',
-                value: 'System ready',
-                description: 'ARCFlow workspace has been initialized.',
-              ),
-              const SizedBox(height: 14),
-              const DashboardPanel(
-                title: 'Habit Tracker',
-                value: 'Starter module',
-                description: 'Offline habit tracking interface preview.',
-              ),
-              const SizedBox(height: 14),
-              const DashboardPanel(
-                title: 'Task Management',
-                value: 'Dashboard preview',
-                description: 'Clean productivity panel for the next phase.',
-              ),
-              const Spacer(),
-              Container(
-                width: double.infinity,
-                height: 3,
-                color: AppColors.primary,
-                alignment: Alignment.centerLeft,
-                child: FractionallySizedBox(
-                  widthFactor: 0.64,
-                  child: Container(height: 3, color: AppColors.highlight),
-                ),
-              ),
+              const _HomeHeader(),
+              const SizedBox(height: 16),
+              const _TodayScoreCard(),
+              const SizedBox(height: 12),
+              const _QuickActions(),
+              const SizedBox(height: 12),
+              const _TodaySection(),
+              const SizedBox(height: 12),
+              const _ContributionCard(),
+              const SizedBox(height: 12),
+              const _InsightCard(),
             ],
           ),
         ),
@@ -479,31 +460,124 @@ class HomeDashboardScreen extends StatelessWidget {
   }
 }
 
-class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({super.key});
+class _HomeHeader extends StatelessWidget {
+  const _HomeHeader();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return _Panel(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(
+            AppAssets.dashboardIcon,
+            width: 182,
+            height: 78,
+            fit: BoxFit.contain,
+            alignment: Alignment.centerLeft,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Offline productivity workspace',
+            style: TextStyle(
+              color: Color(0xFF444444),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            height: 2,
+            width: double.infinity,
+            color: const Color(0xFF111111),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TodayScoreCard extends StatelessWidget {
+  const _TodayScoreCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _Label('TODAY SCORE'),
+          const SizedBox(height: 12),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: const [
+              Text(
+                '72%',
+                style: TextStyle(
+                  color: Color(0xFF111111),
+                  fontSize: 46,
+                  fontWeight: FontWeight.w900,
+                  height: 0.95,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: Text(
+                    'Your daily workspace is clear and ready.',
+                    style: TextStyle(
+                      color: Color(0xFF555555),
+                      fontSize: 12,
+                      height: 1.35,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          const _ProgressText(title: '5 of 7 habits completed', value: '71%'),
+          const SizedBox(height: 8),
+          const _ProgressText(
+            title: '3 priority tasks completed',
+            value: '60%',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProgressText extends StatelessWidget {
+  const _ProgressText({required this.title, required this.value});
+
+  final String title;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       children: [
-        Image.asset(
-          AppAssets.dashboardIcon,
-          width: 154,
-          height: 68,
-          fit: BoxFit.contain,
-          alignment: Alignment.centerLeft,
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xFF111111),
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
-        const SizedBox(height: 10),
-        const Text(
-          'Professional offline productivity system',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: AppColors.softText,
+        Text(
+          value,
+          style: const TextStyle(
+            color: Color(0xFF111111),
             fontSize: 12,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.3,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ],
@@ -511,60 +585,286 @@ class DashboardHeader extends StatelessWidget {
   }
 }
 
-class DashboardPanel extends StatelessWidget {
-  const DashboardPanel({
-    super.key,
+class _QuickActions extends StatelessWidget {
+  const _QuickActions();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: const [
+        Expanded(
+          child: _ActionBox(icon: Icons.add, text: 'Add Habit'),
+        ),
+        SizedBox(width: 9),
+        Expanded(
+          child: _ActionBox(icon: Icons.task_alt, text: 'Add Task'),
+        ),
+        SizedBox(width: 9),
+        Expanded(
+          child: _ActionBox(icon: Icons.checklist, text: 'Check Today'),
+        ),
+      ],
+    );
+  }
+}
+
+class _ActionBox extends StatelessWidget {
+  const _ActionBox({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Panel(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+      child: Column(
+        children: [
+          Icon(icon, color: const Color(0xFF111111), size: 22),
+          const SizedBox(height: 8),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xFF111111),
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TodaySection extends StatelessWidget {
+  const _TodaySection();
+
+  @override
+  Widget build(BuildContext context) {
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          _Label('TODAY HABITS'),
+          SizedBox(height: 12),
+          _ListItem(title: 'Read 20 pages', subtitle: 'Habit', status: 'Done'),
+          _Line(),
+          _ListItem(
+            title: 'Workout 30 minutes',
+            subtitle: 'Habit',
+            status: 'Pending',
+          ),
+          _Line(),
+          _ListItem(title: 'Study Flutter', subtitle: 'Habit', status: 'Today'),
+          SizedBox(height: 16),
+          _Label('PRIORITY TASKS'),
+          SizedBox(height: 12),
+          _ListItem(
+            title: 'Finish loading screen UI',
+            subtitle: 'Task',
+            status: 'High',
+          ),
+          _Line(),
+          _ListItem(
+            title: 'Prepare asset folder',
+            subtitle: 'Task',
+            status: 'Medium',
+          ),
+          _Line(),
+          _ListItem(
+            title: 'Review dashboard layout',
+            subtitle: 'Task',
+            status: 'Medium',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ListItem extends StatelessWidget {
+  const _ListItem({
     required this.title,
-    required this.value,
-    required this.description,
+    required this.subtitle,
+    required this.status,
   });
 
   final String title;
-  final String value;
-  final String description;
+  final String subtitle;
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool done = status == 'Done' || status == 'High';
+
+    return Row(
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          color: done ? const Color(0xFF111111) : const Color(0xFFCFCFCF),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFF111111),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  color: Color(0xFF666666),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Text(
+          status,
+          style: const TextStyle(
+            color: Color(0xFF111111),
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ContributionCard extends StatelessWidget {
+  const _ContributionCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final values = <int>[4, 3, 1, 0, 2, 4, 3, 1, 2, 0, 4, 3, 2, 1];
+
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _Label('MINI CONTRIBUTION PREVIEW'),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: values.map((value) {
+              return Container(width: 16, height: 16, color: _shade(value));
+            }).toList(),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Last 14 days activity based on habit and task completion.',
+            style: TextStyle(
+              color: Color(0xFF555555),
+              fontSize: 11,
+              height: 1.35,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _shade(int value) {
+    if (value <= 0) return const Color(0xFFEDEDED);
+    if (value == 1) return const Color(0xFFCFCFCF);
+    if (value == 2) return const Color(0xFF9E9E9E);
+    if (value == 3) return const Color(0xFF555555);
+    return const Color(0xFF111111);
+  }
+}
+
+class _InsightCard extends StatelessWidget {
+  const _InsightCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return _Panel(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          Icon(Icons.trending_up, color: Color(0xFF111111), size: 24),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'You are more consistent than last week. Complete the remaining priority items and keep today clean.',
+              style: TextStyle(
+                color: Color(0xFF111111),
+                fontSize: 12,
+                height: 1.45,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Panel extends StatelessWidget {
+  const _Panel({required this.child, this.padding = const EdgeInsets.all(15)});
+
+  final Widget child;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: padding,
       decoration: BoxDecoration(
-        color: const Color(0xFF070711),
-        border: Border.all(color: AppColors.border, width: 1),
+        color: const Color(0xFFFFFFFF),
+        border: Border.all(color: const Color(0xFFD6D6D6), width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title.toUpperCase(),
-            style: const TextStyle(
-              color: AppColors.highlight,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 9),
-          Text(
-            value,
-            style: const TextStyle(
-              color: AppColors.white,
-              fontSize: 17,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.4,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            description,
-            style: const TextStyle(
-              color: AppColors.softText,
-              fontSize: 12,
-              height: 1.35,
-            ),
-          ),
-        ],
+      child: child,
+    );
+  }
+}
+
+class _Label extends StatelessWidget {
+  const _Label(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        color: Color(0xFF111111),
+        fontSize: 10,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 1.1,
       ),
+    );
+  }
+}
+
+class _Line extends StatelessWidget {
+  const _Line();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      color: const Color(0xFFE0E0E0),
     );
   }
 }
