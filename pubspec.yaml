@@ -1,0 +1,36 @@
+﻿name: arcflow
+description: ARCFlow premium offline first mobile application prototype.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: any
+  video_player: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: any
+  flutter_launcher_icons: any
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/brand/arcflow/app_icon/arcflowiconapp.png
+    - assets/brand/arcflow/logo_kit/app_icon/arcflow_app_icon_v1_0.png
+    - assets/videos/splash/company_intro/arcdev_company_intro_loading_screen_v1_0.mp4
+    - assets/videos/loading/loading_rendering/loading_screen_rendering.mp4
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: assets/brand/arcflow/app_icon/arcflowiconapp.png
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: assets/brand/arcflow/app_icon/arcflowiconapp.png
+
