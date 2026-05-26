@@ -41,6 +41,66 @@ Aplikasi ini berfokus pada habit tracking, todo management, analisis progres har
 
 ---
 
+<!-- ARCFlow Visual Preview Start -->
+
+---
+
+## Visual Preview | Pratinjau Visual
+
+### Main Brand Icon and App Icon | Icon Utama dan Icon Aplikasi
+
+<p align="center">
+  <img src="./docs/readme/arcflow-main-icon.png" alt="ARCFlow Main Brand Icon" width="180" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="./docs/readme/arcflow-app-icon.png" alt="ARCFlow App Icon" width="180" />
+</p>
+
+<p align="center">
+  <sub><b>EN:</b> Left is the main ARCFlow brand icon, right is the mobile app icon.</sub><br>
+  <sub><b>ID:</b> Sebelah kiri adalah icon utama brand ARCFlow, sebelah kanan adalah icon aplikasi mobile.</sub>
+</p>
+
+---
+
+## Loading Screen Previews | Pratinjau Loading Screen
+
+<details>
+  <summary><b>Preview 1 — Company Intro Loading Screen | Loading Screen Intro Company</b></summary>
+  <br>
+  <p align="center">
+    <b>GIF preview belum dibuat.</b><br>
+    <sub>Install ffmpeg lalu jalankan ulang command ini untuk membuat preview looping.</sub>
+  </p>
+  <p align="center">
+    <sub><b>EN:</b> Automatic company intro shown when the application is opened.</sub><br>
+    <sub><b>ID:</b> Intro company otomatis yang tampil saat aplikasi pertama kali dibuka.</sub>
+  </p>
+  <p align="center">
+    <a href="./assets/videos/splash/company_intro/arcdev_company_intro_loading_screen_v1_0.mp4">Open full MP4 video</a>
+  </p>
+</details>
+
+<br>
+
+<details>
+  <summary><b>Preview 2 — Rendering Loading Screen | Loading Screen Rendering</b></summary>
+  <br>
+  <p align="center">
+    <b>GIF preview belum dibuat.</b><br>
+    <sub>Install ffmpeg lalu jalankan ulang command ini untuk membuat preview looping.</sub>
+  </p>
+  <p align="center">
+    <sub><b>EN:</b> Looping rendering loading screen before the user enters the main dashboard.</sub><br>
+    <sub><b>ID:</b> Loading screen rendering yang berulang sebelum pengguna masuk ke dashboard utama.</sub>
+  </p>
+  <p align="center">
+    <a href="./assets/videos/loading/loading_rendering/loading_screen_rendering.mp4">Open full MP4 video</a>
+  </p>
+</details>
+
+---
+
+<!-- ARCFlow Visual Preview End -->
 ## Project Identity
 
 ```text
@@ -524,6 +584,8 @@ Repository ini hanya disediakan untuk pembelajaran pribadi, eksperimen aplikasi 
 ---
 
 ## License
+
+Full proprietary license text is available in [LICENSE](./LICENSE).
 
 No open source license is granted for this repository.
 
